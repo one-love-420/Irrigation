@@ -6,6 +6,7 @@ Create a folder named “packages” in your Home Assistant configuration direct
 In the packages directory you can store any number of packages in a YAML file.
 
 To use packages in Home Assistant add the following to your configuration.yaml
+
 homeassistant:
   packages: !include_dir_named packages/
 
