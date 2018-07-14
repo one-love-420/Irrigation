@@ -1,0 +1,766 @@
+#===========
+#=== Groups
+#===========
+group:
+
+  irrigation_master_control:
+    control: hidden
+    name: Irrigation Pump Control
+    entities:
+     - switch.master_pump
+     - switch.mixing_pump
+
+  irrigation_information:
+    control: hidden
+    name: Irrigation Information
+    entities:
+      - sensor.last_irrigated_time
+      - sensor.zone1_time_today
+      - sensor.zone2_time_today
+      - sensor.zone3_time_today
+      - sensor.zone4_time_today
+      - sensor.zone5_time_today
+      - sensor.zone6_time_today
+      - sensor.zone7_time_today
+      - sensor.zone8_time_today
+
+  irrigation_cycle1:
+    control: hidden
+    name: 'Morning Cycle'
+    entities:
+      - input_boolean.cycle1_enable
+      - sensor.cycle1_next_run_time
+      - input_boolean.cycle1_manual_run
+      - input_select.cycle1_schedule_time
+      - input_select.cycle1_watering_days
+      - input_number.cycle1_zone1_duration
+      - input_number.cycle1_zone2_duration
+      - input_number.cycle1_zone3_duration
+      - input_number.cycle1_zone4_duration
+      - input_number.cycle1_zone5_duration
+      - input_number.cycle1_zone6_duration
+      - input_number.cycle1_zone7_duration
+      - input_number.cycle1_zone8_duration
+
+  irrigation_cycle1_status:
+    control: hidden
+    name: 'Morning Cycle Status'
+    entities:
+      - sensor.cycle1_running
+      - sensor.cycle1_zone_being_watered
+      - timer.cycle1_zone_duration
+
+  irrigation_cycle2:
+    control: hidden
+    name: 'Afternoon Cycle'
+    entities:
+      - input_boolean.cycle2_enable
+      - sensor.cycle2_next_run_time
+      - input_boolean.cycle2_manual_run
+      - input_select.cycle2_schedule_time
+      - input_select.cycle2_watering_days
+      - input_number.cycle2_zone1_duration
+      - input_number.cycle2_zone2_duration
+      - input_number.cycle2_zone3_duration
+      - input_number.cycle2_zone4_duration
+      - input_number.cycle2_zone5_duration
+      - input_number.cycle2_zone6_duration
+      - input_number.cycle2_zone7_duration
+      - input_number.cycle2_zone8_duration
+
+  irrigation_cycle2_status:
+    control: hidden
+    name: 'Afternoon Cycle Status'
+    entities:
+      - sensor.cycle2_running
+      - sensor.cycle2_zone_being_watered
+      - timer.cycle2_zone_duration
+
+  irrigation_valves_status:
+    control: hidden
+    name: 'Valves Status'
+    entities:
+      - sensor.zone1_status
+      - sensor.zone2_status
+      - sensor.zone3_status
+      - sensor.zone4_status
+      - sensor.zone5_status
+      - sensor.zone6_status
+      - sensor.zone7_status
+      - sensor.zone8_status
+
+  irrigation_valves:
+    control: hidden
+    name: 'Valves'
+    entities:
+      - switch.zone1_valve
+      - switch.zone2_valve
+      - switch.zone3_valve
+      - switch.zone4_valve
+      - switch.zone5_valve
+      - switch.zone6_valve
+      - switch.zone7_valve
+      - switch.zone8_valve
+
+#================
+#=== Input_Texts
+#================
+input_text:
+  cycle1_current_zone:
+    name: Cycle 1 current zone
+
+  cycle2_current_zone:
+    name: Cycle 2 current zone
+
+
+#==================
+#=== Input_Selects
+#==================
+input_select:
+
+  cycle1_watering_days:
+    name: Morning cycle watering days
+    options:
+      - 'Daily'
+      - 'Alternate'
+    icon: mdi:calendar
+
+  cycle2_watering_days:
+    name: Afternoon cycle watering days
+    options:
+      - 'Daily'
+      - 'Alternate'
+    icon: mdi:calendar
+
+  cycle1_schedule_time:
+    name: Morning cycle schedule start time
+    options:
+      - '08:00'
+      - '09:00'
+      - '10:00'
+      - '11:00'
+      - '12:00'
+    icon: mdi:alarm
+
+  cycle2_schedule_time:
+    name: Afternoon cycle schedule start time
+    options:
+      - '15:00'
+      - '16:00'
+      - '17:00'
+      - '18:00'
+      - '19:00'
+    icon: mdi:alarm
+
+
+#==================
+#=== Input_Numbers
+#==================
+input_number:
+
+  # CYCLE 1
+  cycle1_zone1_duration:
+    name: Zone 1 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone2_duration:
+    name: Zone 2 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone3_duration:
+    name: Zone 3 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone4_duration:
+    name: Zone 4 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone5_duration:
+    name: Zone 5 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone6_duration:
+    name: Zone 6 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone7_duration:
+    name: Zone 7 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle1_zone8_duration:
+    name: Zone 8 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  # CYCLE 2
+  cycle2_zone1_duration:
+    name: Zone 1 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle2_zone2_duration:
+    name: Zone 2 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer  
+
+  cycle2_zone3_duration:
+    name: Zone 3 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle2_zone4_duration:
+    name: Zone 4 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer
+
+  cycle2_zone5_duration:
+    name: Zone 5 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer  
+
+  cycle2_zone6_duration:
+    name: Zone 6 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer  
+
+  cycle2_zone7_duration:
+    name: Zone 7 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer  
+
+  cycle2_zone8_duration:
+    name: Zone 8 duration
+    min: 0
+    max: 30
+    step: 1
+    icon: mdi:camera-timer  
+
+
+#===================
+#=== Input_Booleans
+#===================
+input_boolean:
+
+  cycle1_enable:
+    name: Enable schedule
+    icon: mdi:pipe
+    
+  cycle2_enable:
+    name: Enable schedule
+    icon: mdi:pipe
+
+  cycle1_manual_run:
+    name: Run morning cycle now
+    icon: mdi:arrow-right-drop-circle
+
+  cycle2_manual_run:
+    name: Run afternoon cycle now
+    icon: mdi:arrow-right-drop-circle
+
+  cycle1_running:
+    name: Cycle 1 running
+
+  cycle2_running:
+    name: Cycle 2 running
+
+
+#====================
+#=== Input_Datetimes
+#====================
+input_datetime:
+  cycle1_next_run_time:
+    has_date: true
+    has_time: true
+
+  cycle2_next_run_time:
+    has_date: true
+    has_time: true
+
+  last_irrigated_time:
+    has_date: true
+    has_time: true
+
+
+#===========
+#=== timers
+#===========
+timer:
+  cycle1_zone_duration:
+    name: Time remaining
+
+  cycle2_zone_duration:
+    name: Time remaining
+
+
+#============
+#=== Sensors
+#============
+sensor:
+  - platform: template
+    sensors:
+
+      cycle1_next_run_time:
+        friendly_name: "Next scheduled run time"
+        value_template: >
+          {% if is_state('input_boolean.cycle1_enable', 'on') %}
+            {{ (as_timestamp(states.input_datetime.cycle1_next_run_time.state)) | timestamp_custom("%a %d %h at %H:%M") }}
+          {% else %}
+            None
+          {% endif %}
+        icon_template: mdi:clock-start
+
+      cycle2_next_run_time:
+        friendly_name: "Next scheduled run time"
+        value_template: >
+          {% if is_state('input_boolean.cycle2_enable', 'on') %}
+            {{ (as_timestamp(states.input_datetime.cycle2_next_run_time.state)) | timestamp_custom("%a %d %h at %H:%M") }}
+          {% else %}
+            None
+          {% endif %}
+        icon_template: mdi:clock-start
+
+      cycle1_running:
+        friendly_name: "Morning cycle"
+        value_template: >
+          {% if is_state('input_boolean.cycle1_running', 'on') %}
+            Running
+          {% else %}
+            Not running
+          {% endif %}     
+        icon_template: >
+          {% if is_state('input_boolean.cycle1_running', 'on') %}
+            mdi:run
+          {% else %}
+            mdi:human-handsdown
+          {% endif %}     
+          
+      cycle2_running:
+        friendly_name: "Afternoon cycle"
+        value_template: >
+          {% if is_state('input_boolean.cycle2_running', 'on') %}
+            Running
+          {% else %}
+            Not running
+          {% endif %}     
+        icon_template: >
+          {% if is_state('input_boolean.cycle2_running', 'on') %}
+            mdi:run
+          {% else %}
+            mdi:human-handsdown
+          {% endif %}     
+
+      zone1_status:
+        friendly_name: "Zone 1 Valve"
+        value_template: >
+          {% if is_state('switch.zone1_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone1_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone2_status:
+        friendly_name: "Zone 2 Valve"
+        value_template: >
+          {% if is_state('switch.zone2_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone2_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone3_status:
+        friendly_name: "Zone 3 Valve"
+        value_template: >
+          {% if is_state('switch.zone3_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone3_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone4_status:
+        friendly_name: "Zone 4 Valve"
+        value_template: >
+          {% if is_state('switch.zone4_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone4_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone5_status:
+        friendly_name: "Zone 5 Valve"
+        value_template: >
+          {% if is_state('switch.zone5_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone5_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone6_status:
+        friendly_name: "Zone 6 Valve"
+        value_template: >
+          {% if is_state('switch.zone6_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone6_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone7_status:
+        friendly_name: "Zone 7 Valve"
+        value_template: >
+          {% if is_state('switch.zone7_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone7_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      zone8_status:
+        friendly_name: "Zone 8 Valve"
+        value_template: >
+          {% if is_state('switch.zone8_valve', 'on') %}
+            Open
+          {% else %}
+            Closed
+          {% endif %}     
+        icon_template: >
+          {% if is_state('switch.zone8_valve', 'on') %}
+            mdi:pipe
+          {% else %}
+            mdi:pipe-disconnected
+          {% endif %}     
+
+      cycle1_zone_being_watered:
+        friendly_name: "Zone being watered"
+        value_template: "{{ states('input_text.cycle1_current_zone') }}"     
+        icon_template: mdi:square-inc
+        
+      cycle2_zone_being_watered:
+        friendly_name: "Zone being watered"
+        value_template: "{{ states('input_text.cycle2_current_zone') }}"     
+        icon_template: mdi:square-inc
+
+      last_irrigated_time:
+        friendly_name: "Last irrigation cycle ended"
+        value_template: >
+          {{ (as_timestamp(states.input_datetime.last_irrigated_time.state)) | timestamp_custom("%a %d %h at %H:%M") }}
+        icon_template: mdi:update
+        
+      # Zone Times - templated on history_stats sensors
+      zone1_time_today:
+        friendly_name: Zone 1 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone1_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+
+      zone2_time_today:
+        friendly_name: Zone 2 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone2_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+      zone3_time_today:
+        friendly_name: Zone 3 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone3_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+      zone4_time_today:
+        friendly_name: Zone 4 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone4_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+      zone5_time_today:
+        friendly_name: Zone 5 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone5_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+      zone6_time_today:
+        friendly_name: Zone 6 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone6_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+      zone7_time_today:
+        friendly_name: Zone 7 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone7_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+      zone8_time_today:
+        friendly_name: Zone 8 total watering time today
+        value_template: >
+          {% set duration = states('sensor.zone8_time') %}
+          {{ (float(duration) * 60) | round }}
+        unit_of_measurement: minutes
+        icon_template: mdi:water
+        
+
+  # History sensors
+  # Zone Times
+  - platform: history_stats
+    name: zone1_time
+    entity_id: switch.zone1_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone2_time
+    entity_id: switch.zone2_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone3_time
+    entity_id: switch.zone3_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone4_time
+    entity_id: switch.zone4_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone5_time
+    entity_id: switch.zone5_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone6_time
+    entity_id: switch.zone6_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone7_time
+    entity_id: switch.zone7_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: zone8_time
+    entity_id: switch.zone8_valve
+    state: 'on'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+
+#=============
+#=== Switches
+#=============
+switch:
+
+  # sonoff (4ch)
+  # Zone 1
+  - platform: mqtt
+    name: "Zone1 valve"
+    state_topic: "stat/irrigation/POWER1"
+    command_topic: "cmnd/irrigation/power1"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 2
+  - platform: mqtt
+    name: "Zone2 valve"
+    state_topic: "stat/irrigation/POWER2"
+    command_topic: "cmnd/irrigation/power2"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 3
+  - platform: mqtt
+    name: "Zone3 valve"
+    state_topic: "stat/irrigation/POWER3"
+    command_topic: "cmnd/irrigation/power3"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 4
+  - platform: mqtt
+    name: "Zone4 valve"
+    state_topic: "stat/irrigation/POWER4"
+    command_topic: "cmnd/irrigation/power4"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 5
+  - platform: mqtt
+    name: "Zone5 valve"
+    state_topic: "stat/irrigation/POWER5"
+    command_topic: "cmnd/irrigation/power5"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 6
+  - platform: mqtt
+    name: "Zone6 valve"
+    state_topic: "stat/irrigation/POWER6"
+    command_topic: "cmnd/irrigation/power6"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 7
+  - platform: mqtt
+    name: "Zone7 valve"
+    state_topic: "stat/irrigation/POWER7"
+    command_topic: "cmnd/irrigation/power7"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true
+
+  # Zone 8
+  - platform: mqtt
+    name: "Zone8 valve"
+    state_topic: "stat/irrigation/POWER8"
+    command_topic: "cmnd/irrigation/power8"
+    availability_topic: "tele/irrigation/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: true

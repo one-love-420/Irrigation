@@ -1,0 +1,12 @@
+garden_view:
+  view: yes
+  name: Garden
+  icon: mdi:cannabis
+  entities:
+  - group.irrigation_master_control
+  - group.irrigation_information
+  - group.irrigation_cycle1
+  - group.irrigation_cycle2
+  - group.irrigation_cycle1_status
+  - group.irrigation_cycle2_status
+  - group.irrigation_valves_status

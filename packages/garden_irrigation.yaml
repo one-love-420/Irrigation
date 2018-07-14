@@ -1,0 +1,443 @@
+#================
+#=== Automations
+#================
+automation:
+
+#============================================================
+#=== Set next run time when schedule enabled or time changed
+#============================================================
+  - alias: Set next run time
+    trigger:
+      - platform: state
+        entity_id:
+          - input_boolean.cycle1_enable
+          - input_boolean.cycle2_enable
+        to: 'on'
+      - platform: state
+        entity_id:
+          - input_select.cycle1_schedule_time
+          - input_select.cycle2_schedule_time
+    action:
+      - service: input_datetime.set_datetime
+        data_template:
+          entity_id: >
+            {% if trigger.entity_id == 'input_boolean.cycle1_enable' or
+                  trigger.entity_id == 'input_select.cycle1_schedule_time' %}
+              input_datetime.cycle1_next_run_time
+            {% else %}
+              input_datetime.cycle2_next_run_time
+            {% endif %}
+          date: >
+            {% if trigger.entity_id == 'input_boolean.cycle1_enable' or
+                  trigger.entity_id == 'input_select.cycle1_schedule_time' %}
+              {% set time = states('input_select.cycle1_schedule_time') %}
+            {% else %}
+              {% set time = states('input_select.cycle2_schedule_time') %}
+            {% endif %}
+            {% if now().strftime('%H:%M') < time %}
+              {{ as_timestamp(now()) | timestamp_custom("%Y-%m-%d") }}
+            {% else %}
+              {{ (as_timestamp(now()) + 24 * 3600 ) | timestamp_custom("%Y-%m-%d") }}
+            {% endif %}
+          time: >
+            {% if trigger.entity_id == 'input_boolean.cycle1_enable' or
+                  trigger.entity_id == 'input_select.cycle1_schedule_time' %}
+              {{ states('input_select.cycle1_schedule_time') }}
+            {% else %}
+              {{ states('input_select.cycle2_schedule_time') }}
+            {% endif %}
+
+    
+#==================================================================
+#=== Run irrigation cycles at the right time and on the right days
+#==================================================================
+
+  #=== Cycle 1
+  - alias: Run Irrigation Cycle 1
+    initial_state: 'on'
+    trigger:
+      - platform: time
+        minutes: 00
+        seconds: 00
+
+    condition:
+      - condition: template
+        value_template: >
+          {{ now().strftime('%Y-%m-%d %H:%M:00') == states('input_datetime.cycle1_next_run_time') }}
+      - condition: state
+        entity_id: input_boolean.cycle1_enable
+        state: 'on'
+
+    action:
+      - service: script.run_a_cycle
+        data_template:
+          cycle: 1
+
+  #=== Cycle 2
+  - alias: Run Irrigation Cycle 2
+    initial_state: 'on'
+    trigger:
+      - platform: time
+        minutes: 00
+        seconds: 00
+
+    condition:
+      - condition: template
+        value_template: >
+          {{ now().strftime('%Y-%m-%d %H:%M:00') == states('input_datetime.cycle2_next_run_time') }}
+      - condition: state
+        entity_id: input_boolean.cycle2_enable
+        state: 'on'
+
+    action:
+      - service: script.run_a_cycle
+        data_template:
+          cycle: 2
+
+
+#======================
+# Run A Cycle Manually
+#======================
+  - alias: Run Cycle a Maually
+    trigger:
+    - platform: state
+      entity_id: 
+      - input_boolean.cycle1_manual_run
+      - input_boolean.cycle2_manual_run
+      from: 'off'
+      to: 'on'
+
+    # Don't run if the other cycle is already running
+    condition:
+    - condition: template
+      value_template: >
+        {% if trigger_entity_id == 'input_boolean.cycle1_manual_run' %}
+          {{ states('sensor.cycle2_running') == 'Not running' }}
+        {% else %}
+          {{ states('sensor.cycle1_running') == 'Not running' }}
+        {% endif %}
+
+    action:
+    # Update progress in ui
+    - service: input_text.set_value
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_boolean.cycle1_manual_run' %}
+            input_text.cycle1_current_zone
+          {% else %}
+            input_text.cycle2_current_zone
+          {% endif %}
+        value: 'Initialising...'
+
+    # Make sure nothing in the system is running
+    # turn off valves
+    - service: homeassistant.turn_off  
+      data_template:
+        entity_id: group.irrigation_valves
+
+    # turn off scripts
+    - service: homeassistant.turn_off
+      entity_id: script.run_a_cycle
+
+    - service: homeassistant.turn_off
+      entity_id: script.irrigate_a_zone
+
+    # disable both programmes
+    - service: homeassistant.turn_off
+      entity_id:
+      - input_boolean.cycle1_enable
+      - input_boolean.cycle2_enable
+
+    # run a cycle
+    - service: script.run_a_cycle
+      data_template:
+        cycle: >
+          {% if trigger.entity_id == 'input_boolean.cycle1_manual_run' %}
+            1
+          {% else %}
+            2
+          {% endif %}
+
+    # wait until script is finished
+    - wait_template: "{{ is_state('script.run_a_cycle', 'off') }}"
+
+    # turn off both manual run booleans (in case one was turned on
+    # while the other was already running)
+    - service: homeassistant.turn_off  
+      entity_id:
+      - input_boolean.cycle1_manual_run
+      - input_boolean.cycle2_manual_run
+
+
+  #=======================
+  # Cancel A Manual Cycle
+  #=======================
+  - alias: Cancel A Manual Cycle
+    trigger:
+    - platform: state
+      entity_id: 
+      - input_boolean.cycle1_manual_run
+      - input_boolean.cycle2_manual_run
+      from: 'on'
+      to: 'off'
+
+    action:
+    # turn off valves
+    - service: homeassistant.turn_off  
+      data_template:
+        entity_id: group.irrigation_valves
+
+    # turn off scripts
+    - service: homeassistant.turn_off
+      entity_id: script.run_a_cycle
+
+    - service: homeassistant.turn_off
+      entity_id: script.irrigate_a_zone
+
+    # Cancel the timer
+    - service: timer.cancel
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_boolean.cycle1_manual_run' %}
+            timer.cycle1_zone_duration
+          {% else %}
+            timer.cycle2_zone_duration
+          {% endif %}
+      
+    # Update progress in ui
+    - service: homeassistant.turn_off
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_boolean.cycle1_manual_run' %}
+            input_boolean.cycle1_running
+          {% else %}
+            input_boolean.cycle2_running
+          {% endif %}
+
+    - service: input_text.set_value
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_boolean.cycle1_manual_run' %}
+            input_text.cycle1_current_zone
+          {% else %}
+            input_text.cycle2_current_zone
+          {% endif %}
+        value: 'None'
+
+
+  #===================================================
+  #=== Update the last time an irrigation cycle ended
+  #===================================================
+  - alias: Update last run time
+    trigger:
+    - platform: state
+      entity_id: group.irrigation_valves
+      to: 'off'
+      for: '00:00:05'
+    action:
+    - service: input_datetime.set_datetime
+      data_template:
+        entity_id: input_datetime.last_irrigated_time
+        date: >
+          {{ as_timestamp(now()) | timestamp_custom("%Y-%m-%d ") }}
+        time: >
+          {{ as_timestamp(now()) | timestamp_custom("%H:%M") }}
+
+
+#============
+#=== Scripts
+#============
+script:
+
+  #==============================
+  #=== Script to run a cycle
+  #=== is passed:
+  #===   {{ cycle }}
+  #==============================
+  run_a_cycle:
+    sequence:
+
+      # Update next runtime
+      - service: input_datetime.set_datetime
+        data_template:
+          entity_id: input_datetime.cycle{{ cycle }}_next_run_time
+          date: >
+            {% if states('input_select.cycle' + cycle + '_watering_days') == 'Daily' %}
+              {{ (as_timestamp(now() ) + 24 * 3600 ) | timestamp_custom("%Y-%m-%d ") }}
+            {% else %}  
+              {{ (as_timestamp(now() ) + 48 * 3600 ) | timestamp_custom("%Y-%m-%d ") }}
+            {% endif %}
+          time: >
+              {{ states('input_select.cycle' + cycle + '_schedule_time') }}
+
+      # Only continue if no cycle is running
+      - condition: state
+        entity_id: 'sensor.cycle1_running'
+        state: 'Not running'
+      - condition: state
+        entity_id: 'sensor.cycle2_running'
+        state: 'Not running'
+
+      # Update ui to show cycle is running
+      - service: homeassistant.turn_on
+        data_template:  
+          entity_id: input_boolean.cycle{{ cycle }}_running
+
+      # Call the script to irrigate zone 1
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 1
+
+      # Wait for irrigate script to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+
+      # Call the script to irrigate zone 2
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 2
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+      
+      # Call the script to irrigate zone 3
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 3
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+      
+      # Call the script to irrigate zone 4
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 4
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+      
+      # Call the script to irrigate zone 5
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 5
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+      
+      # Call the script to irrigate zone 6
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 6
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+      
+      # Call the script to irrigate zone 7
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 7
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+      
+      # Call the script to irrigate zone 8
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: 8
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+
+      # Update progress in ui
+      - service: input_text.set_value
+        data_template:
+          entity_id: input_text.cycle{{ cycle }}_current_zone
+          value: 'None'
+
+      - service: homeassistant.turn_off  
+        data_template:
+          entity_id: input_boolean.cycle{{ cycle }}_running
+
+
+  #==============================
+  #=== Script to irrigate a zone
+  #=== is passed:
+  #===   {{ cycle }}
+  #===   {{ zone }}
+  #==============================
+  irrigate_a_zone:
+    sequence:
+
+      # Don't continue if duration is zero
+      - condition: template
+        value_template: >
+          {% set n = states('input_number.cycle' + cycle + '_zone' + zone + '_duration')  | int %}
+            {{ n != 0 }}
+          
+      # wait 3 seconds for good measure to enable previous zone to completly finish
+      - delay: "00:00:03"
+
+      # Update progress in ui
+      - service: input_text.set_value
+        data_template:
+          entity_id: 'input_text.cycle{{ cycle }}_current_zone'
+          value: '{{ zone }}'
+
+      - service: switch.turn_on
+        data_template:
+          entity_id: switch.zone{{ zone }}_valve
+         
+      # Start timer for zone duration
+          
+########################################
+# CHANGE DURATION BACK TO MINUTES AFTER TESTING
+#      00:{{ '%02i' | format(adj_duration) }}:00
+#      00:{{ '%02i' | format(duration) }}:00
+#
+#
+# Use seconds for testing
+#      00:00:{{ '%02i' | format(adj_duration) }}
+#      00:00:{{ '%02i' | format(duration) }}
+########################################
+#      - service: timer.start
+#        data_template:
+#          entity_id: timer.cycle{{ cycle }}_zone_duration
+#          duration: >
+#            {% set duration = states('input_number.cycle' + cycle + '_zone' + zone + '_duration')  | int %}
+#            {% set adj_duration = states('input_number.adjusted_cycle' + cycle + '_zone' + zone + '_duration')  | int %}
+#            {% if is_state('input_boolean.cycle' + cycle + '_use_weather_adjustment', 'on') %}
+#              00:00:{{ '%02i' | format(adj_duration) }}
+#            {% else %}
+#              00:00:{{ '%02i' | format(duration) }}
+#            {% endif %}
+#      - wait_template: >
+#          {% set entity = 'timer.cycle' + cycle + '_zone_duration' %}
+#          {{ is_state(entity , 'idle') }}
+##########################################
+
+      - service: timer.start
+        data_template:
+          entity_id: timer.cycle{{ cycle }}_zone_duration
+          duration: >
+            {% set duration = states('input_number.cycle' + cycle + '_zone' + zone + '_duration')  | int %}
+              00:{{ '%02i' | format(duration) }}:00
+      - wait_template: >
+          {% set entity = 'timer.cycle' + cycle + '_zone_duration' %}
+          {{ is_state(entity , 'idle') }}
+
+      - service: switch.turn_off
+        data_template:
+          entity_id: switch.zone{{ zone }}_valve
+
+      # Update progress in ui
+      - service: input_text.set_value
+        data_template:
+          entity_id: input_text.cycle{{ cycle }}_current_zone
+          value: 'Changing zone...'
