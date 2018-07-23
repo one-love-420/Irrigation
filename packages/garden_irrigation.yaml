@@ -98,7 +98,7 @@ automation:
 #======================
 # Run A Cycle Manually
 #======================
-  - alias: Run Cycle a Maually
+  - alias: Run a Cycle Maually
     trigger:
     - platform: state
       entity_id: 
