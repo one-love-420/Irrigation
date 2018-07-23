@@ -283,6 +283,14 @@ script:
         data_template:  
           entity_id: input_boolean.cycle{{ cycle }}_running
 
+      # Turn on master irrigation pump
+      - service: switch.turn_on
+        data_template:
+          entity_id: switch.master_pump
+          
+      # wait 3 seconds for good measure to enable pressure in system
+      - delay: "00:00:03"
+
       # Call the script to irrigate zone 1
       - service: script.irrigate_a_zone
         data_template:
@@ -364,6 +372,11 @@ script:
       - service: homeassistant.turn_off  
         data_template:
           entity_id: input_boolean.cycle{{ cycle }}_running
+
+      # Turn off master irrigation pump
+      - service: switch.turn_off
+        data_template:
+          entity_id: switch.master_pump
 
 
   #==============================

@@ -660,7 +660,6 @@ sensor:
 #=============
 switch:
 
-  # sonoff (4ch)
   # Zone 1
   - platform: mqtt
     name: "Zone1 valve"
