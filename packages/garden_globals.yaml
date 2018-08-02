@@ -351,8 +351,8 @@ binary_sensor:
     payload_off: "off"
 
   - platform: mqtt
-    state_topic: "irrigation/zone5_button"
-    name: "Zone 5 Button"
+    state_topic: "irrigation/zone4_button"
+    name: "Zone 4 Button"
     payload_on: "on"
     payload_off: "off"
 
