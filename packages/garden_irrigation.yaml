@@ -243,6 +243,46 @@ automation:
         time: >
           {{ as_timestamp(now()) | timestamp_custom("%H:%M") }}
 
+#======================
+# Run A Specific Zone Manually
+#======================
+  - alias: Irrigation Zone request
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.zone1_button
+          - binary_sensor.zone2_button
+          - binary_sensor.zone3_button
+          - binary_sensor.zone4_button
+          - binary_sensor.zone5_button
+          - binary_sensor.zone6_button
+          - binary_sensor.zone7_button
+          - binary_sensor.zone8_button
+        from: 'off'
+        to: 'on'
+    action:
+      - wait_template: "{{  states('sensor.cycle1_running') == 'Not running' }}"
+      - service: script.irrigate_specific_zone_request
+        data_template:
+          cycle: 1
+          zone: >
+           {% if trigger.entity_id == 'binary_sensor.zone1_button' %}
+             1
+           {% elif trigger.entity_id == 'binary_sensor.zone2_button'  %}
+             2
+           {% elif trigger.entity_id == 'binary_sensor.zone3_button'  %}
+             3
+           {% elif trigger.entity_id == 'binary_sensor.zone4_button'  %}
+             4
+           {% elif trigger.entity_id == 'binary_sensor.zone5_button'  %}
+             5
+           {% elif trigger.entity_id == 'binary_sensor.zone6_button'  %}
+             6
+           {% elif trigger.entity_id == 'binary_sensor.zone7_button'  %}
+             7
+           {% elif trigger.entity_id == 'binary_sensor.zone8_button'  %}
+             8
+           {% endif %}
 
 #============
 #=== Scripts
@@ -454,3 +494,47 @@ script:
         data_template:
           entity_id: input_text.cycle{{ cycle }}_current_zone
           value: 'Changing zone...'
+
+#==============================
+#=== Script to irrigate a specific zone
+#=== is passed:
+#=== {{ cycle }}
+#=== {{ zone }}
+#==============================
+  irrigate_specific_zone_request:
+    sequence:
+      # Update ui to show cycle is running
+      - service: homeassistant.turn_on
+        data_template:  
+          entity_id: input_boolean.cycle{{ cycle }}_running
+
+      # Turn on master irrigation pump
+      - service: switch.turn_on
+        data_template:
+          entity_id: switch.master_pump
+          
+      # wait 3 seconds for good measure to enable pressure in system
+      - delay: "00:00:03"
+
+      - service: script.irrigate_a_zone
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: '{{ zone }}'
+
+      # Wait for script.irrigate_a_zone to end
+      - wait_template: "{{ is_state('script.irrigate_a_zone', 'off') }}"
+
+      # Update progress in ui
+      - service: input_text.set_value
+       data_template:
+          entity_id: input_text.cycle{{ cycle }}_current_zone
+          value: 'None'
+
+      - service: homeassistant.turn_off  
+       data_template:
+         entity_id: input_boolean.cycle{{ cycle }}_running
+
+      # Turn off master irrigation pump
+      - service: switch.turn_off
+        data_template:
+          entity_id: switch.master_pump

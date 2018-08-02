@@ -328,6 +328,57 @@ timer:
   cycle2_zone_duration:
     name: Time remaining
 
+#============
+#=== Binary Sensor
+#============
+binary_sensor:
+  - platform: mqtt
+    state_topic: "irrigation/zone1_button"
+    name: "Zone 1 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone2_button"
+    name: "Zone 2 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone3_button"
+    name: "Zone 3 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone5_button"
+    name: "Zone 5 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone5_button"
+    name: "Zone 5 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone6_button"
+    name: "Zone 6 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone7_button"
+    name: "Zone 7 Button"
+    payload_on: "on"
+    payload_off: "off"
+
+  - platform: mqtt
+    state_topic: "irrigation/zone8_button"
+    name: "Zone 8 Button"
+    payload_on: "on"
+    payload_off: "off"
 
 #============
 #=== Sensors
