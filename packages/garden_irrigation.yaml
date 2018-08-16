@@ -526,12 +526,12 @@ script:
 
       # Update progress in ui
       - service: input_text.set_value
-       data_template:
+        data_template:
           entity_id: input_text.cycle{{ cycle }}_current_zone
           value: 'None'
 
       - service: homeassistant.turn_off  
-       data_template:
+        data_template:
          entity_id: input_boolean.cycle{{ cycle }}_running
 
       # Turn off master irrigation pump
