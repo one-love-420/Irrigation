@@ -395,7 +395,6 @@ sensor:
           {% else %}
             None
           {% endif %}
-        icon_template: mdi:clock-start
 
       cycle2_next_run_time:
         friendly_name: "Next scheduled run time"
@@ -405,7 +404,6 @@ sensor:
           {% else %}
             None
           {% endif %}
-        icon_template: mdi:clock-start
 
       cycle1_running:
         friendly_name: "Morning cycle"
@@ -559,19 +557,16 @@ sensor:
 
       cycle1_zone_being_watered:
         friendly_name: "Zone being watered"
-        value_template: "{{ states('input_text.cycle1_current_zone') }}"     
-        icon_template: mdi:square-inc
+        value_template: "{{ states('input_text.cycle1_current_zone') }}" 
         
       cycle2_zone_being_watered:
         friendly_name: "Zone being watered"
-        value_template: "{{ states('input_text.cycle2_current_zone') }}"     
-        icon_template: mdi:square-inc
+        value_template: "{{ states('input_text.cycle2_current_zone') }}" 
 
       last_irrigated_time:
         friendly_name: "Last irrigation cycle ended"
         value_template: >
           {{ (as_timestamp(states.input_datetime.last_irrigated_time.state)) | timestamp_custom("%a %d %h at %H:%M") }}
-        icon_template: mdi:update
         
       # Zone Times - templated on history_stats sensors
       zone1_time_today:
@@ -580,7 +575,6 @@ sensor:
           {% set duration = states('sensor.zone1_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
 
       zone2_time_today:
         friendly_name: Zone 2 total watering time today
@@ -588,7 +582,6 @@ sensor:
           {% set duration = states('sensor.zone2_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
       zone3_time_today:
         friendly_name: Zone 3 total watering time today
@@ -596,7 +589,6 @@ sensor:
           {% set duration = states('sensor.zone3_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
       zone4_time_today:
         friendly_name: Zone 4 total watering time today
@@ -604,7 +596,6 @@ sensor:
           {% set duration = states('sensor.zone4_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
       zone5_time_today:
         friendly_name: Zone 5 total watering time today
@@ -612,7 +603,6 @@ sensor:
           {% set duration = states('sensor.zone5_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
       zone6_time_today:
         friendly_name: Zone 6 total watering time today
@@ -620,7 +610,6 @@ sensor:
           {% set duration = states('sensor.zone6_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
       zone7_time_today:
         friendly_name: Zone 7 total watering time today
@@ -628,7 +617,6 @@ sensor:
           {% set duration = states('sensor.zone7_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
       zone8_time_today:
         friendly_name: Zone 8 total watering time today
@@ -636,7 +624,6 @@ sensor:
           {% set duration = states('sensor.zone8_time') %}
           {{ duration|float|multiply(60)|round }}
         unit_of_measurement: minutes
-        icon_template: mdi:water
         
 
   # History sensors
